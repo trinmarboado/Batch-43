@@ -26,7 +26,8 @@
         :class="{ 'text-grey strike-through': todo.isDone }"
       >
         {{ i }}
-        {{ todo.desc }}
+        <q-input v-if="editing === i" v-model="todo.desc" @keyup.esc="editing = -1" @blur="editing = -1" />
+        <span v-else @dblclick="editing = i">{{ todo.desc }}</span>
       </q-item-section>
       <q-item-section side>
         <q-btn @click="removeTodo(i)" round size="sm" dense icon="delete" color="red" />
@@ -39,7 +40,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 
-const t = 'not reactive'
+const editing = ref(-1)
 
 let task = ref('Trin Pogi')
 
