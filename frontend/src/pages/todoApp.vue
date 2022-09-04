@@ -5,29 +5,49 @@
       <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
     </q-avatar>
 
-    <q-toolbar-title>Batch 43 Todo App</q-toolbar-title>
+    <q-toolbar-title>Batch 43 Todo App {{ task }}</q-toolbar-title>
 
     <q-btn flat round dense icon="whatshot" />
   </q-toolbar>
-  <q-input filled modelValue="" label="Filled" />
+  <q-input filled v-model="task" label="Task" />
   <q-list bordered separator>
-    <q-item clickable v-ripple>
-      <q-item-section avatar>
+    <q-item clickable v-ripple v-for="todo in todos" :key="todo.id">
+      <q-item-section  avatar>
         <q-icon name="signal_wifi_off" />
       </q-item-section>
-      <q-item-section>Active</q-item-section>
-      <q-item-section side>Side</q-item-section>
-    </q-item>
-    <q-item clickable v-ripple>
-      <q-item-section avatar>
-        <q-icon name="signal_wifi_off" />
-      </q-item-section>
-      <q-item-section>Active</q-item-section>
+      <q-item-section>{{ todo.desc }}</q-item-section>
       <q-item-section side>Side</q-item-section>
     </q-item>
   </q-list>
 
 </template>
+
+<script setup>
+import { ref } from 'vue';
+
+const t = 'not reactive'
+
+let task = ref('Trin Pogi')
+
+const todos = [
+  {
+    id: 'asdasdd2q312tghrgy',
+    isDone: false,
+    desc: 'create a function',
+  },
+  {
+    id: '56h5hrty56',
+    isDone: false,
+    desc: 'create add button',
+  },
+  {
+    id: 'tr6y457645',
+    isDone: false,
+    desc: 'discuss reactive',
+  }
+]
+
+</script>
 
 <style>
 .title {
