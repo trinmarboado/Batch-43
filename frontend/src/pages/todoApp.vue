@@ -13,16 +13,24 @@
     <q-input filled
       class="col"
       :modelValue="task"
-      @update:modelValue="(val) => { task = val }" label="Task" />
+      @keyup.enter="add"
+      @update:modelValue="updateTaskText" label="Task" />
     <q-btn @click="add" icon="add" label="add" />
   </div>
   <q-list bordered separator>
-    <q-item clickable v-ripple v-for="todo in data.todos" :key="todo.id">
+    <q-item clickable v-ripple v-for="(todo, i) in data.todos" :key="todo.id">
       <q-item-section  avatar>
-        <q-icon name="signal_wifi_off" />
+        <q-checkbox :modelValue="todo.isDone" @click="updateStatus(i, todo.isDone)" />
       </q-item-section>
-      <q-item-section>{{ todo.desc }}</q-item-section>
-      <q-item-section side>Side</q-item-section>
+      <q-item-section
+        :class="{ 'text-grey strike-through': todo.isDone }"
+      >
+        {{ i }}
+        {{ todo.desc }}
+      </q-item-section>
+      <q-item-section side>
+        <q-btn @click="removeTodo(i)" round size="sm" dense icon="delete" color="red" />
+      </q-item-section>
     </q-item>
   </q-list>
 
@@ -43,12 +51,12 @@ const todos = [
   },
   {
     id: '56h5hrty56',
-    isDone: false,
-    desc: 'create add button',
+    isDone: true,
+    desc: 'create add button asdasda',
   },
   {
     id: 'tr6y457645',
-    isDone: false,
+    isDone: true,
     desc: 'discuss reactive',
   }
 ]
@@ -57,8 +65,10 @@ const data = reactive({
   todos
 })
 
+const updateTaskText = (val) => task.value = val
+
 function add () {
-  data.todos.push({
+  data.todos.unshift({
     id: Date.now(),
     isDone: false,
     desc: task.value,
@@ -69,11 +79,18 @@ function add () {
   task.value = ''
 }
 
+const removeTodo = (i) => data.todos.splice(i, 1)
 
+const updateStatus = (i, status) => {
+  data.todos[i].isDone = !status
+}
 
 </script>
 
 <style>
+.strike-through {
+  text-decoration: line-through;
+}
 .title {
   color: pink;
   background-color: orange;
