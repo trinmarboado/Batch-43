@@ -9,9 +9,15 @@
 
     <q-btn flat round dense icon="whatshot" />
   </q-toolbar>
-  <q-input filled v-model="task" label="Task" />
+  <div class="row q-gutter-sm q-ma-sm">
+    <q-input filled
+      class="col"
+      :modelValue="task"
+      @update:modelValue="(val) => { task = val }" label="Task" />
+    <q-btn @click="add" icon="add" label="add" />
+  </div>
   <q-list bordered separator>
-    <q-item clickable v-ripple v-for="todo in todos" :key="todo.id">
+    <q-item clickable v-ripple v-for="todo in data.todos" :key="todo.id">
       <q-item-section  avatar>
         <q-icon name="signal_wifi_off" />
       </q-item-section>
@@ -23,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 
 const t = 'not reactive'
 
@@ -46,6 +52,24 @@ const todos = [
     desc: 'discuss reactive',
   }
 ]
+
+const data = reactive({
+  todos
+})
+
+function add () {
+  data.todos.push({
+    id: Date.now(),
+    isDone: false,
+    desc: task.value,
+  })
+
+  console.log('new Todos', todos)
+
+  task.value = ''
+}
+
+
 
 </script>
 
