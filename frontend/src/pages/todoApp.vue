@@ -17,7 +17,7 @@
       @update:modelValue="updateTaskText" label="Task" />
     <q-btn @click="add" icon="add" label="add" />
   </div>
-  <q-list bordered separator>
+  <q-list id="forPrint" bordered separator>
     <q-item clickable v-ripple v-for="(todo, i) in filteredTodos" :key="todo.id">
       <q-item-section  avatar>
         <q-checkbox :modelValue="todo.isDone" @click="updateStatus(i, todo.isDone)" />
@@ -49,8 +49,15 @@
   <!-- <area-chart :data="{'2021-01-01': 11, '2021-01-02': 6}"></area-chart> -->
 
   <!-- <column-chart :data="[['Sun', 32], ['Mon', 46], ['Tue', 28]]"></column-chart> -->
+  <div>
+    <pie-chart :donut="true" :data="[['active', itemsLeft.length], ['completed', data.todos.length - itemsLeft.length]]"></pie-chart>
 
-  <!-- <pie-chart :donut="true" :data="[['active', itemsLeft.length], ['completed', data.todos.length - itemsLeft.length]]"></pie-chart> -->
+    <q-btn round icon="import_contacts" @click="generatePDF('open')" />
+    <q-btn round icon="download" @click="generatePDF('download')" />
+    <q-btn round icon="print" @click="generatePDF('print')" />
+    <q-btn round icon="water_drop" @click="ink" />
+  </div>
+  
 
   <AddComp :num1="246" :num2="123" :answer="answer" @getAnswer="(val) => answer = val" />
 
@@ -59,10 +66,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, inject } from 'vue';
 // import mjFood from 'src/components/MjFood.vue';
 import AddComp from 'src/components/AddComp.vue';
 // import AddComp from 'src/components/AddComp.vue';
+
+import print from 'ink-html'
+
+const pdfMake = inject('pdfMake')
 
 const answer = ref('unknown')
 
@@ -154,6 +165,27 @@ const removeTodo = (i) => data.todos.splice(i, 1)
 
 const updateStatus = (i, status) => {
   data.todos[i].isDone = !status
+}
+
+function generatePDF (method) {
+  const dd = {
+    content: [
+      {
+        table: {
+          body: [
+            ['status', 'count'],
+            ['active', itemsLeft.value.length],
+            ['completed', data.todos.length - itemsLeft.value.length]
+          ]
+        }
+      }
+    ]
+  }
+  pdfMake.createPdf(dd)[method]()
+}
+
+function ink () {
+  print(document.querySelector('#forPrint'))
 }
 
 </script>
