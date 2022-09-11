@@ -18,7 +18,7 @@
     <q-btn @click="add" icon="add" label="add" />
   </div>
   <q-list bordered separator>
-    <q-item clickable v-ripple v-for="(todo, i) in data.todos" :key="todo.id">
+    <q-item clickable v-ripple v-for="(todo, i) in filteredTodos" :key="todo.id">
       <q-item-section  avatar>
         <q-checkbox :modelValue="todo.isDone" @click="updateStatus(i, todo.isDone)" />
       </q-item-section>
@@ -34,11 +34,53 @@
       </q-item-section>
     </q-item>
   </q-list>
-
+  <div class="q-pa-md row">
+    {{ itemsLeft.length }} item{{ itemsLeft.length > 2 ? 's': '' }} left
+    <div class="col column">
+      <q-btn-group push class="self-center">
+        <q-btn @click="view = 'all'" :color="view === 'all' ? 'yellow': ''" glossy text-color="black" push label="All" active />
+        <q-btn @click="view = 'active'" :color="view === 'active' ? 'yellow': ''"  glossy text-color="black" push label="Active" />
+        <q-btn @click="view = 'completed'" :color="view === 'completed' ? 'yellow': ''" glossy text-color="black" push label="Completed" />
+      </q-btn-group>
+    </div>
+    <q-btn @click="data.todos = itemsLeft" label="clear completed" />
+  </div>
+  {{ foods }}
+  <mj-food :list="foods" name="Trin" @ate="logAteFood"/>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
+import mjFood from 'src/components/MjFood.vue';
+
+const foods = ref([
+  'sinigang',
+  'adobo',
+  'mongo',
+  'ice cream'
+])
+
+const view = ref('all')
+
+function logAteFood (val) {
+  console.log('MJ ate', val)
+  for (const food of foods.value) {
+    console.log('forof', food)
+  }
+
+  // for (const index in foods.value) {
+  //   console.log('forin', index)
+  //   if (foods.value[index] ===  val) {
+  //     foods.value.splice(index, 1)
+  //     return
+  //   }
+  // }
+
+  // map, foreach, some, reduce
+
+  const index = foods.value.findIndex(food => food === val)
+  foods.value.splice(index, 1)
+}
 
 const editing = ref(-1)
 
@@ -64,6 +106,21 @@ const todos = [
 
 const data = reactive({
   todos
+})
+
+const itemsLeft = computed(() => {
+  return data.todos.filter(t => !t.isDone)
+})
+
+const filteredTodos = computed(() => {
+  switch (view.value) {
+    case 'active':
+      return itemsLeft.value
+    case 'completed':
+      return data.todos.filter(t => t.isDone)
+    default:
+      return data.todos
+  }
 })
 
 const updateTaskText = (val) => task.value = val
