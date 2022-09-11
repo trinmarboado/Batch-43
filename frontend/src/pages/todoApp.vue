@@ -46,7 +46,7 @@
     <q-btn @click="data.todos = itemsLeft" label="clear completed" />
   </div>
 
-  <AddComp :num1="123" :num2="123" :answer="answer" @getAnswer="(val) => answer = val" />
+  <AddComp :num1="246" :num2="123" :answer="answer" @getAnswer="(val) => answer = val" />
 
   <!-- {{ foods }}
   <mj-food :list="foods" name="Trin" @ate="logAteFood"/> -->
