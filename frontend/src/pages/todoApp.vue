@@ -46,6 +46,12 @@
     <q-btn @click="data.todos = itemsLeft" label="clear completed" />
   </div>
 
+  <!-- <area-chart :data="{'2021-01-01': 11, '2021-01-02': 6}"></area-chart> -->
+
+  <!-- <column-chart :data="[['Sun', 32], ['Mon', 46], ['Tue', 28]]"></column-chart> -->
+
+  <!-- <pie-chart :donut="true" :data="[['active', itemsLeft.length], ['completed', data.todos.length - itemsLeft.length]]"></pie-chart> -->
+
   <AddComp :num1="246" :num2="123" :answer="answer" @getAnswer="(val) => answer = val" />
 
   <!-- {{ foods }}
