@@ -45,13 +45,20 @@
     </div>
     <q-btn @click="data.todos = itemsLeft" label="clear completed" />
   </div>
-  {{ foods }}
-  <mj-food :list="foods" name="Trin" @ate="logAteFood"/>
+
+  <AddComp :num1="123" :num2="123" :answer="answer" @getAnswer="(val) => answer = val" />
+
+  <!-- {{ foods }}
+  <mj-food :list="foods" name="Trin" @ate="logAteFood"/> -->
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
-import mjFood from 'src/components/MjFood.vue';
+// import mjFood from 'src/components/MjFood.vue';
+import AddComp from 'src/components/AddComp.vue';
+// import AddComp from 'src/components/AddComp.vue';
+
+const answer = ref('unknown')
 
 const foods = ref([
   'sinigang',
