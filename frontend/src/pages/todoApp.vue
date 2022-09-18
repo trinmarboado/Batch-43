@@ -26,11 +26,14 @@
         :class="{ 'text-grey strike-through': todo.isDone }"
       >
         {{ i }}
-        <q-input v-if="editing === i" v-model="todo.desc" @keyup.esc="editing = -1" @blur="editing = -1" />
-        <span v-else @dblclick="editing = i">{{ todo.desc }}</span>
+        <q-input v-if="editing === i" v-model="todo.desc"
+          @keyup.enter="updateDesc(todo._id, todo.desc), editing = -1"
+          @keyup.esc="editing = -1, todo.desc = tempDesc"
+          @blur="editing = -1, todo.desc = tempDesc" />
+        <span v-else @dblclick="editing = i, tempDesc = todo.desc">{{ todo.desc }}</span>
       </q-item-section>
       <q-item-section side>
-        <q-btn @click="removeTodo(i)" round size="sm" dense icon="delete" color="red" />
+        <q-btn @click="removeTodo(todo._id)" round size="sm" dense icon="delete" color="red" />
       </q-item-section>
     </q-item>
   </q-list>
@@ -76,6 +79,8 @@ import print from 'ink-html'
 const pdfMake = inject('pdfMake')
 
 const answer = ref('unknown')
+
+let tempDesc = ''
 
 const foods = ref([
   'sinigang',
@@ -155,11 +160,22 @@ const filteredTodos = computed(() => {
   }
 })
 
+const updateDesc = (i, newDesc) => {
+  todosSrvc.patch(i, {
+    desc: newDesc
+  })
+}
+
 const updateTaskText = (val) => task.value = val
 
-function add () {
-  data.todos.unshift({
-    id: Date.now(),
+async function add () {
+  // data.todos.unshift({
+  //   id: Date.now(),
+  //   isDone: false,
+  //   desc: task.value,
+  // })
+
+  await todosSrvc.create({
     isDone: false,
     desc: task.value,
   })
@@ -169,7 +185,7 @@ function add () {
   task.value = ''
 }
 
-const removeTodo = (i) => data.todos.splice(i, 1)
+const removeTodo = (i) => todosSrvc.remove(i) // data.todos.splice(i, 1)
 
 const updateStatus = (i, status) => {
   // data.todos[i].isDone = !status
