@@ -145,6 +145,20 @@ todosSrvc.on('dataChange', (todos) => {
 
 todosSrvc.init()
 
+const find = async () => {
+  const result = await todosSrvc.find({
+    query: {
+      isDone: true,
+      $skip: 1
+    }
+  })
+  console.log('result', result)
+}
+
+find()
+
+
+
 const itemsLeft = computed(() => {
   return data.todos.filter(t => !t.isDone)
 })
