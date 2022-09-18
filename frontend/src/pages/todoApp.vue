@@ -7,7 +7,12 @@
 
     <q-toolbar-title>Batch 43 Todo App {{ task }}</q-toolbar-title>
 
-    <q-btn flat round dense icon="whatshot" />
+    <q-btn v-if="!data.user" flat round dense icon="whatshot" @click="wingsApp.authenticate({
+      email: 'pogi@pogi.com',
+      password: 'pogi',
+      strategy: 'local'
+    })" />
+    <q-btn v-else @click="wingsApp.logout">Logout</q-btn>
   </q-toolbar>
   <div class="row q-gutter-sm q-ma-sm">
     <q-input filled
@@ -69,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, inject } from 'vue';
+import { ref, reactive, computed, inject, onBeforeUnmount } from 'vue';
 // import mjFood from 'src/components/MjFood.vue';
 import AddComp from 'src/components/AddComp.vue';
 // import AddComp from 'src/components/AddComp.vue';
@@ -81,6 +86,8 @@ const pdfMake = inject('pdfMake')
 const answer = ref('unknown')
 
 let tempDesc = ''
+
+const data = inject('data')
 
 const foods = ref([
   'sinigang',
@@ -115,32 +122,16 @@ const editing = ref(-1)
 
 let task = ref('Trin Pogi')
 
-const todos = [
-  {
-    id: 'asdasdd2q312tghrgy',
-    isDone: false,
-    desc: 'create a function',
-  },
-  {
-    id: '56h5hrty56',
-    isDone: true,
-    desc: 'create add button asdasda',
-  },
-  {
-    id: 'tr6y457645',
-    isDone: true,
-    desc: 'discuss reactive',
-  }
-]
+const wingsApp = inject('wingsApp')
 
-const data = reactive({
-  todos
-})
+wingsApp.authenticate()
 
 const todosSrvc = inject('todosService')
 
 todosSrvc.on('dataChange', (todos) => {
   data.todos = [...todos]
+
+  console.log('todosSrvc', todosSrvc)
 })
 
 todosSrvc.init()
@@ -157,6 +148,9 @@ const find = async () => {
 
 find()
 
+onBeforeUnmount(() => {
+  todosSrvc.destroy()
+})
 
 
 const itemsLeft = computed(() => {
