@@ -20,7 +20,7 @@
   <q-list id="forPrint" bordered separator>
     <q-item clickable v-ripple v-for="(todo, i) in filteredTodos" :key="todo.id">
       <q-item-section  avatar>
-        <q-checkbox :modelValue="todo.isDone" @click="updateStatus(i, todo.isDone)" />
+        <q-checkbox :modelValue="todo.isDone" @click="updateStatus(todo._id, todo.isDone)" />
       </q-item-section>
       <q-item-section
         :class="{ 'text-grey strike-through': todo.isDone }"
@@ -132,6 +132,14 @@ const data = reactive({
   todos
 })
 
+const todosSrvc = inject('todosService')
+
+todosSrvc.on('dataChange', (todos) => {
+  data.todos = [...todos]
+})
+
+todosSrvc.init()
+
 const itemsLeft = computed(() => {
   return data.todos.filter(t => !t.isDone)
 })
@@ -164,7 +172,11 @@ function add () {
 const removeTodo = (i) => data.todos.splice(i, 1)
 
 const updateStatus = (i, status) => {
-  data.todos[i].isDone = !status
+  // data.todos[i].isDone = !status
+
+  todosSrvc.patch(i, {
+    isDone: !status,
+  })
 }
 
 function generatePDF (method) {
